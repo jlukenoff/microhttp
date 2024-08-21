@@ -1,12 +1,12 @@
 package org.microhttp.examples;
 
+import org.microhttp.DebugLogger;
 import org.microhttp.EventLoop;
 import org.microhttp.Header;
 import org.microhttp.Logger;
 import org.microhttp.Options;
 import org.microhttp.OptionsBuilder;
 import org.microhttp.Response;
-import org.microhttp.LogEntry;
 
 import java.io.IOException;
 import java.util.List;
@@ -24,29 +24,9 @@ public class ExampleServer {
 				.withConcurrency(
 						args.length > 1 ? Integer.parseInt(args[1]) : Runtime.getRuntime().availableProcessors())
 				.build();
-		Logger logger = new ConsoleLogger();
+		Logger logger = new DebugLogger();
 		EventLoop eventLoop = new EventLoop(options, logger, (req, callback) -> callback.accept(response));
 		eventLoop.start();
 	}
 
-	static class ConsoleLogger implements Logger {
-		@Override
-		public boolean enabled() {
-			return true;
-		}
-
-		@Override
-		public void log(LogEntry... entries) {
-			for (LogEntry entry : entries) {
-				System.out.println(entry.toString());
-			}
-		}
-
-		@Override
-		public void log(Exception e, LogEntry... entries) {
-			System.err.println("Exception: " + e.getMessage());
-			e.printStackTrace(System.err);
-			log(entries);
-		}
-	}
 }
